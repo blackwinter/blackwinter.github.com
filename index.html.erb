@@ -13,7 +13,7 @@
         <a href="<%= repo[:url] %>"><%=h repo[:name] %></a>
         - <%= repo[:fork] ? '[FORK] ' : '' %><%=h repo[:description] %>
         (<%= n = repo[:watchers] %> watcher<%= n != 1 ? 's' : '' %>, <%= n = repo[:forks] %> fork<%= n != 1 ? 's' : '' %>)
-        [<a href="<%= repo[:homepage] %>">homepage</a>]
+        <% unless repo[:homepage].empty? %>[<a href="<%= repo[:homepage] %>">homepage</a>]<% end %>
       </li>
     <% end %>
     </ul>
