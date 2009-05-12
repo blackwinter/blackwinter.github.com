@@ -2,11 +2,21 @@ require 'open-uri'
 require 'erb'
 require 'cgi'
 
-task :default => %w[index.html]
+URL   = 'http://github.com/api/v1/yaml/blackwinter'
+FILES = %w[index.html]
+
+task :default => %w[update]
+task :update  => %w[clean files]
+task :files   => FILES
+
+task :clean do
+  FILES.each { |file|
+    File.unlink(file) if File.exists?(file)
+  }
+end
 
 file 'index.html' do
-  url = 'http://github.com/api/v1/yaml/blackwinter'
-  repos = YAML.load(open(url))['user']['repositories']
+  repos = YAML.load(open(URL))['user']['repositories']
   template = File.read('index.html.erb')
 
   def h(string)
