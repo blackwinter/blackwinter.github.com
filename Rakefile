@@ -1,9 +1,9 @@
 require 'open-uri'
-require 'yaml'
+require 'json'
 require 'erb'
 require 'cgi'
 
-URL   = 'http://github.com/api/v1/yaml/blackwinter'
+URL   = 'https://api.github.com/users/blackwinter/repos'
 FILES = %w[index.html]
 
 task :default => %w[update]
@@ -17,7 +17,7 @@ task :clean do
 end
 
 file 'index.html' do
-  repos = YAML.load(open(URL))['user']['repositories']
+  repos    = JSON.parse(open(URL).read, symbolize_names: true)
   template = File.read('index.html.erb')
 
   def h(string)
