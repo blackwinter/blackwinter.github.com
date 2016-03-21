@@ -3,23 +3,26 @@ require 'json'
 require 'erb'
 require 'cgi'
 
-URL   = 'https://api.github.com/users/blackwinter/repos?page=%d'
-FILES = %w[index.html]
+url = 'https://api.github.com/users/blackwinter/repos?page=%d'
+htm = 'index.html'
+erb = htm + '.erb'
 
-task :default => %w[update]
-task :update  => %w[clean files]
-task :files   => FILES
+task default: htm
 
-task :clean do
-  FILES.each { |file| File.unlink(file) if File.exists?(file) }
+def api(url)
+  JSON.parse(open(url).read, symbolize_names: true)
 end
 
-file 'index.html' do
-  repos, page, template = [], 0, File.read('index.html.erb')
+file htm => erb do
+  repos, page, template = [], 0, File.read(erb)
 
   loop {
-    r = JSON.parse(open(URL % page += 1).read, symbolize_names: true)
-    r.empty? ? break : repos.concat(r)
+    result = api(url % page += 1)
+    result.empty? ? break : repos.concat(result)
+  }
+
+  repos.each { |repo|
+    repo[:parent] ||= api(repo[:url])[:parent] if repo[:fork]
   }
 
   def h(string)
@@ -27,5 +30,5 @@ file 'index.html' do
   end
 
   result = ERB.new(template).result(binding)
-  File.open('index.html', 'w') { |f| f.puts result } unless result.empty?
+  File.open(htm, 'w') { |f| f.puts result } unless result.empty?
 end
