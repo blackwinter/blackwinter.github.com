@@ -3,7 +3,9 @@ require 'json'
 require 'erb'
 require 'cgi'
 
-url = 'https://api.github.com/users/blackwinter/repos?page=%d'
+user = ENV['GITHUB_USER'] || %x{git config github.user}.chomp
+
+url = "https://api.github.com/users/#{user}/repos?page=%d"
 htm = 'index.html'
 erb = htm + '.erb'
 
