@@ -15,7 +15,7 @@ def api(url)
   JSON.parse(open(url).read, symbolize_names: true)
 end
 
-file htm => erb do
+task htm => erb do
   repos, page, template = [], 0, File.read(erb)
 
   loop {
