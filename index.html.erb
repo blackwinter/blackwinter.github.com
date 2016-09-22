@@ -9,10 +9,12 @@
   <ul>
   <% for repo in repos.sort_by { |r| r[:name] } %>
     <li>
-      <a href="<%= repo[:html_url] %>"><%=h repo[:name] %></a>
-      – <%= repo[:fork] ? %Q{[<a href="#{repo[:parent][:html_url]}">FORK</a>] } : '' %><%=h repo[:description] %>
+      <%= a repo[:name], repo[:html_url] %>
+      – <%= repo[:fork] ? "[#{a 'FORK', repo[:parent][:html_url]}] " : '' %><%=h repo[:description] %>
       (<%= n = repo[:watchers] %> watcher<%= n != 1 ? 's' : '' %>, <%= n = repo[:forks] %> fork<%= n != 1 ? 's' : '' %>)
-      <% unless repo[:homepage].to_s.empty? %>[<a href="<%= repo[:homepage] %>">homepage</a>]<% end %>
+      <%= v(repo, :homepage) { |v| a 'homepage', v } %>
+      <%= v(repo, :language) %>
+      <%= v(repo, :license, :spdx_id) %>
     </li>
   <% end %>
   </ul>

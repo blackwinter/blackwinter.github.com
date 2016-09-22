@@ -9,10 +9,12 @@ url = "https://api.github.com/users/#{user}/repos?page=%d"
 htm = 'index.html'
 erb = htm + '.erb'
 
+OPT = { 'Accept' => 'application/vnd.github.drax-preview+json' }
+
 task default: htm
 
 def api(url)
-  JSON.parse(open(url).read, symbolize_names: true)
+  JSON.parse(open(url, OPT).read, symbolize_names: true)
 end
 
 task htm => erb do
@@ -29,6 +31,15 @@ task htm => erb do
 
   def h(string)
     CGI.escapeHTML(string)
+  end
+
+  def a(name, href)
+    %Q{<a href="#{h(href)}">#{h(name)}</a>}
+  end
+
+  def v(repo, *keys)
+    v = repo.dig(*keys).to_s
+    "[#{block_given? ? yield(v) : h(v)}]" unless v.empty?
   end
 
   result = ERB.new(template).result(binding)
