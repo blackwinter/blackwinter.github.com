@@ -14,7 +14,7 @@ OPT = { 'Accept' => 'application/vnd.github.drax-preview+json' }
 task default: htm
 
 def api(url)
-  JSON.parse(open(url, OPT).read, symbolize_names: true)
+  JSON.parse(URI.open(url, OPT).read, symbolize_names: true)
 end
 
 task htm => erb do
